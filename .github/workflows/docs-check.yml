@@ -11,14 +11,14 @@ permissions:
 
 jobs:
   validate-documentation:
-    name: Validate README and assets
+    name: Validate README and firmware files
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check README and local links
+      - name: Check documentation and firmware packages
         shell: bash
         run: |
           python3 - <<'PYCODE'
@@ -28,38 +28,42 @@ jobs:
           import sys
 
           root = Path.cwd()
-          readme = root / "README.md"
           errors = []
-          if not readme.is_file():
-              errors.append("README.md not found")
-          else:
-              content = readme.read_text(encoding="utf-8")
-              # Check Markdown image and ordinary link targets that are local.
-              for target in re.findall(r"!?\[[^\]]*\]\(([^)]+)\)", content):
-                  target = target.strip().split(" \"", 1)[0].strip("<>")
-                  if target.startswith(("https://", "http://", "mailto:", "#")):
-                      continue
-                  local = unquote(target.split("#", 1)[0].split("?", 1)[0])
-                  if local and not (root / local).is_file():
-                      errors.append(f"Broken local README link: {target}")
-              for firmware in (
-                  "TZD_CS01_V218.TFL",
-                  "XH_HMI_T1_V172.fcav",
-                  "XH_HMI_T5_V113.xha",
-              ):
-                  if firmware not in content:
-                      errors.append(f"Missing firmware reference: {firmware}")
+          readme = root / 'README.md'
+          firmware_files = (
+              Path('firmware/T1/TZD_CS01_V218.TFL'),
+              Path('firmware/T1/XH_HMI_T1_V172.fcav'),
+              Path('firmware/T5/XH_HMI_T5_V113.xha'),
+          )
 
-          # Firmware is third-party software: this documentation repo must not ship binaries.
-          forbidden = {".tfl", ".fcav", ".xha"}
-          for path in root.rglob("*"):
-              if path.is_file() and ".git" not in path.parts and path.suffix.lower() in forbidden:
-                  errors.append(f"Firmware binary committed: {path.relative_to(root)}")
+          if not readme.is_file():
+              errors.append('README.md not found')
+          else:
+              content = readme.read_text(encoding='utf-8')
+              for target in re.findall(r'!?\[[^\]]*\]\(([^)]+)\)', content):
+                  target = target.strip().split(' "', 1)[0].strip('<>')
+                  if target.startswith(('https://', 'http://', 'mailto:', '#')):
+                      continue
+                  local = unquote(target.split('#', 1)[0].split('?', 1)[0])
+                  if local and not (root / local).is_file():
+                      errors.append(f'Broken local README link: {target}')
+
+              for firmware in firmware_files:
+                  if firmware.name not in content:
+                      errors.append(f'Missing README firmware reference: {firmware.name}')
+
+          for firmware in firmware_files:
+              path = root / firmware
+              if not path.is_file():
+                  errors.append(f'Required firmware file not found: {firmware}')
+              elif path.stat().st_size == 0:
+                  errors.append(f'Firmware file is empty: {firmware}')
+              else:
+                  print(f'Firmware present: {firmware} ({path.stat().st_size:,} bytes)')
 
           if errors:
               for error in errors:
-                  print(f"::error::{error}")
+                  print(f'::error::{error}')
               sys.exit(1)
-          print("README links, firmware references and asset policy: OK")
+          print('README, local assets, and required firmware files: OK')
           PYCODE
-
