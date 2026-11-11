@@ -44,8 +44,51 @@ Before changing any firmware:
 2. Confirm the selected package is approved for the installed hardware and OEM configuration; **never flash T1 firmware on T5 or vice versa**.
 3. Export or back up machine settings, sewing patterns/templates, and other configuration through the manufacturer's supported method.
 4. Keep a copy of the original firmware and the manufacturer's recovery instructions. Plan downtime and maintain uninterrupted power throughout flashing.
-5. Follow the manufacturer's update method for package transfer and menu navigation. **The precise USB/update-menu steps have not yet been verified for every machine and are intentionally not invented here.**
+5. Use the documented HMI menu procedure below for the **interface firmware** update. The mainboard firmware update method and firmware transfer method are not established by these screenshots; follow the manufacturer's approved procedure for those steps.
 6. Keep the machine out of production until HMI communication, machine parameters, emergency stop, homing, and a controlled test cycle have all been validated by qualified personnel.
+
+## HMI interface firmware update — photographed procedure (T5 example)
+
+The following touchscreen sequence is documented from a **T5 HMI** on 2026-11-11. Use it when the corresponding menus are present on your machine; menu wording or workflow may differ on T1. This sequence covers the **HMI interface firmware**, **not** the T1 mainboard update.
+
+### Step 1 — Open Menu
+
+From the **Home** screen, tap **Menu** (bottom left).
+
+![Step 1: Home screen — Menu](images/upgrade-step-1-home.jpg)
+
+### Step 2 — Open Assist Setting
+
+On the **Menu** screen, tap **Assist Setting**.
+
+![Step 2: Menu — Assist Setting](images/upgrade-step-2-menu.jpg)
+
+### Step 3 — Open System Upgrade
+
+From **Assist Setting**, tap **System Upgrade**.
+
+![Step 3: Assist Setting — System Upgrade](images/upgrade-step-3-assist-setting.jpg)
+
+### Step 4 — Select Interface and the firmware file
+
+On **System Upgrade**, choose **Interface** in the dropdown at the left. Locate the correct firmware file in the file list and tap the filename to select it. The example shows `XH_HMI_T5_V113.xha` on a T5 system; do not use this file for T1.
+
+![Step 4: System Upgrade — Interface and file list](images/upgrade-step-4-system-upgrade.jpg)
+
+### Step 5 — Start the interface update
+
+Confirm that the intended firmware file is highlighted, then tap the **Interface** button at the **bottom center** to start the upgrade or downgrade. Do **not** confuse this with the left-hand **Interface** dropdown, which selects the firmware category.
+
+![Step 5: Selected firmware — bottom Interface button](images/upgrade-step-5-select-firmware.jpg)
+
+### Step 6 — Allow the update and restart
+
+Wait for the firmware process to complete. The HMI **may restart automatically**, or a restart may be required according to the device's prompts. **Do not interrupt power during the update.** Afterward, return to **System Upgrade** to confirm the interface version and then check whether the Wi-Fi network list is available.
+
+**Visible versions in the photographed T5 example:** mainboard `V.CS01.201` and interface `V2.1.2312.29 T5.113`. This supports the field observation that the T5 route uses an interface update without requiring the T1-specific CS01 V218 mainboard upgrade. It does **not** prove compatibility with every CS01 variant.
+
+> [!CAUTION]
+> The screenshots show the menu path and firmware selection, not a completed flashing operation or a verified server login. Confirm exact firmware compatibility, retain backups, and follow the OEM recovery procedure.
 
 ## T1 HMI — upgrade/downgrade workflow (~10 minutes)
 
@@ -106,64 +149,87 @@ T5 HMI
 **Steps:**
 
 1. Confirm the controller has a **T5 HMI**, and record its installed firmware version.
-2. Using the manufacturer's approved T5 update procedure, install `XH_HMI_T5_V113.xha`.
+2. Follow the [photographed HMI interface update procedure](#hmi-interface-firmware-update--photographed-procedure-t5-example) to select and install `XH_HMI_T5_V113.xha` using the bottom **Interface** button.
 3. Let the update and any required restart complete; verify the resulting HMI firmware version.
 4. Open Wi-Fi settings, verify that the SSID list appears, and test connection to a dedicated network.
 
 > [!WARNING]
 > “Upgrade/downgrade” describes changing to the specified tested version, which may be higher or lower than the currently installed version. It **does not** mean every earlier or later firmware is safe to install.
 
-## Connect to factory Wi-Fi
+## Connect to factory Wi-Fi and XinghuoLANServer — photographed procedure
 
-After the correct HMI workflow:
+After completing the appropriate [T1](#t1-hmi--upgradedowngrade-workflow-10-minutes) or [T5](#t5-hmi--upgradedowngrade-workflow-3-minutes) firmware process, follow the **actual touchscreen sequence photographed on 2026-11-11**. The six photos illustrate network configuration, rather than proving that the machine successfully logged in to the server.
 
-1. For initial testing, use an isolated **2.4 GHz Wi-Fi** access point with a simple SSID and compatible security settings, unless the module's supported radio specifications are verified otherwise.
-2. Scan from the HMI and verify the expected SSID is shown.
-3. Enter credentials and confirm successful association/authentication.
-4. If available, record **IP address, MAC address, gateway, subnet mask**, and connection status.
-5. Verify the connection from an authorized workstation or access-point logs. A failed ping does not necessarily mean Wi-Fi failed, since ICMP may be disabled.
+### Step 1 — Open Menu
 
-| Verification | T1 | T5 |
+From the **Home** screen, tap **Menu** at the bottom-left corner.
+
+![Wi-Fi step 1: Home screen](images/wifi-step-1-home.jpg)
+
+### Step 2 — Open Assist Setting
+
+Tap **Assist Setting** from the **Menu** screen.
+
+![Wi-Fi step 2: Menu screen](images/wifi-step-2-menu.jpg)
+
+### Step 3 — Open Network Setting
+
+On the **Assist Setting** screen, tap **Network Setting** (upper-right button).
+
+![Wi-Fi step 3: Assist Setting](images/wifi-step-3-assist-setting.jpg)
+
+### Step 4 — Select Wireless Network, then tap WiFi
+
+Set **Network Type** to **Wireless Network**, then tap **WiFi** (bottom row). The photographed screen also shows the **Machine address**, **Server IP**, **Server port**, **Save**, and **Login** controls; the server settings are completed in Step 7.
+
+![Wi-Fi step 4: Network Setting](images/wifi-step-4-network-setting.jpg)
+
+### Step 5 — Select a Wi-Fi network
+
+The **Select Wireless Network** screen lists visible SSIDs. Tap **Refresh** if the desired network is missing, then select the factory Wi-Fi network that is allowed to reach XinghuoLANServer.
+
+![Wi-Fi step 5: Choose SSID](images/wifi-step-5-select-network.jpg)
+
+### Step 6 — Enter the wireless password and connect
+
+In the **Please enter the wireless key** dialog, confirm the selected **SSID**, enter its password in **Key**, and tap **Connect**. After the HMI completes the connection attempt, tap **Return** to go back to **Network Setting**. Check the connection status, if available, rather than assuming that a password entry means association succeeded.
+
+![Wi-Fi step 6: SSID and password dialog](images/wifi-step-6-enter-password.jpg)
+
+### Step 7 — Configure the XinghuoLANServer IP and port
+
+Back on the **Network Setting** screen (shown in **Step 4**), enter the address and port for **your own reachable XinghuoLANServer**. For the photographed factory setup:
+
+| HMI field | Photographed example | Notes |
 | --- | --- | --- |
-| Firmware versions recorded | ☐ | ☐ |
-| Wi-Fi menu available | ☐ | ☐ |
-| SSID scan lists networks | ☐ | ☐ |
-| Joined test Wi-Fi | ☐ | ☐ |
-| IP address assigned | ☐ | ☐ |
-| Controller reachable, where supported | ☐ | ☐ |
-| XinghuoLANServer connection confirmed | ☐ | ☐ |
+| **Network Type** | `Wireless Network` | Use the Wi-Fi connection |
+| **Machine address** | Existing machine-specific value | **Do not copy another HMI's address** |
+| **Server IP** | `10.5.2.223` | Example factory LAN server address |
+| **Server port** | `6002` | Example factory LAN server port |
+| **Save** | Button | Save updated network configuration |
+| **Login** | Button | Attempt to connect/login to server |
 
-## XinghuoLANServer network configuration
+![Step 7: Network Setting screen for server IP and port](images/wifi-step-4-network-setting.jpg)
 
-Once the firmware update is complete **and the HMI is connected to the local factory Wi-Fi**, configure its built-in **Network Setting** screen to point to the XinghuoLANServer. The HMI must be on a network that can reach the server; being on the exact same subnet is not required if routing and firewall rules permit access.
-
-### Field configuration example
-
-The following values were entered on a Xinghuo HMI on **2026-11-11**. They are **site-specific examples**, not universal defaults.
-
-| HMI field | Example setting | Purpose |
-| --- | --- | --- |
-| **Network Type** | `Wireless Network` | Uses the HMI's Wi-Fi connection |
-| **Machine address** | *Keep the existing value displayed by the HMI* | Identifies this machine to the Xinghuo system; do not copy another machine's identifier |
-| **Server IP** | `10.5.2.223` | Factory XinghuoLANServer IP in the recorded setup |
-| **Server port** | `6002` | XinghuoLANServer port configured in the recorded setup |
-| **Save** | HMI button | Saves the entered configuration |
-| **Login** | HMI button | Attempts to connect or log in to the configured server |
+Tap **Save**, then tap **Login**. Check the HMI for a successful connection indication and confirm the machine appears online in **XinghuoLANServer**. The HMI and server need network reachability; they do **not** have to share the exact subnet when appropriate routing and firewall rules exist.
 
 > [!NOTE]
-> The `10.5.2.223:6002` address is from the example machine's configuration screen. Replace it with the actual reachable **XinghuoLANServer** IP and listening port at your site. The photo documents entered settings, **not a confirmed successful server login**. The precise server protocol and available production data are still unverified.
+> `10.5.2.223:6002` is specific to the photographed installation—not a universal Xinghuo default. SSIDs shown in the photos are examples; a network name containing `5G` does not by itself establish its radio frequency. Use a compatible access point and verify the supported Wi-Fi band for the installed controller.
 
-### Configure the HMI
+### Connection verification record
 
-1. Complete the **T1 or T5** firmware procedure above; verify that the Wi-Fi network list is available.
-2. On the HMI, open **Network Setting → WiFi** and join the factory's local Wi-Fi SSID.
-3. Confirm that the Wi-Fi network can reach the XinghuoLANServer (check IP routing, access-point isolation and firewall policy if necessary).
-4. Return to **Network Setting** and choose **Wireless Network** in **Network Type**.
-5. **Leave Machine address unchanged** unless your XinghuoLANServer administrator or the manufacturer instructs otherwise.
-6. Set **Server IP** to `10.5.2.223` and **Server port** to `6002` **for this example setup**.
-7. Press **Save** to store the configuration, then press **Login**.
-8. Check the HMI for a connection/login success indication, and independently confirm that the machine appears as online in XinghuoLANServer.
-9. Record the result, including any on-screen error, server log entry, firmware versions, and the test date.
+| Verification | Result |
+| --- | --- |
+| HMI and mainboard firmware versions recorded | ☐ |
+| SSID appears in scanned network list | ☐ |
+| HMI reports successful Wi-Fi connection | ☐ |
+| IP address assigned, if viewable | ☐ |
+| Network Type set to `Wireless Network` | ☐ |
+| Machine address preserved | ☐ |
+| Site-specific server IP and port saved | ☐ |
+| Login succeeds | ☐ |
+| Machine appears online in XinghuoLANServer | ☐ |
+| Machine data available for monitoring | ☐ — not yet established |
 
 ### Connection flow
 
@@ -223,10 +289,21 @@ xinghuo-hmi-wifi-integration/
 ├── README.md
 └── images/
     ├── banner.png
-    └── architecture.png
+    ├── architecture.png
+    ├── upgrade-step-1-home.jpg
+    ├── upgrade-step-2-menu.jpg
+    ├── upgrade-step-3-assist-setting.jpg
+    ├── upgrade-step-4-system-upgrade.jpg
+    ├── upgrade-step-5-select-firmware.jpg
+    ├── wifi-step-1-home.jpg
+    ├── wifi-step-2-menu.jpg
+    ├── wifi-step-3-assist-setting.jpg
+    ├── wifi-step-4-network-setting.jpg
+    ├── wifi-step-5-select-network.jpg
+    └── wifi-step-6-enter-password.jpg
 ```
 
-There is deliberately **no `tools/` directory** and no included firmware binaries.
+No tools, scripts or proprietary firmware binaries are included.
 
 ## Licensing, attribution & disclaimer
 
